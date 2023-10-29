@@ -433,16 +433,11 @@ function doPost(e) {
   // おはようメッセージをスプレッドシートに保存
   if (message.includes(COMMAND_GOD_MORNING)) {
     if (!checkAggregateTimeGoodMorning(currentTime)) {
-      let msg = GOOD_MORNING_START_HOUR + ":";
-      msg += GOOD_MORNING_START_MINUTE + ":";
-      msg += GOOD_MORNING_END_HOUR + ":";
-      msg += GOOD_MORNING_END_MINUTE + ":---";
-      msg += currentTime.getHours() + ":";
-      msg += currentTime.getMinutes() + ":";
       return replyMessage(
         replyToken,
-        msg +
-          "\n「おはよう」メッセージ集計時間外です。\n集計時間は" +
+        "「" +
+          COMMAND_GOD_MORNING +
+          "」メッセージ集計時間外です。\n集計時間は" +
           displayTimeGoodMorning +
           "です"
       );
