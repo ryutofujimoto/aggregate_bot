@@ -204,15 +204,16 @@ function weekAggregateResult(replyToken) {
 
     for (let i = 0; i < data.length; i++) {
         let timestamp = new Date(data[i][0]);
+        let getMessage = data[i][2];
         let row = data[i];
         let userName = row[4];
 
         // 今週の日曜日以降
         if (timestamp >= sunday) {
             if (summary[userName]) {
-                summary[userName]++;
+                summary[userName] += getPoint(getMessage);
             } else {
-                summary[userName] = 1;
+                summary[userName] = getPoint(getMessage);
             }
         }
     }
