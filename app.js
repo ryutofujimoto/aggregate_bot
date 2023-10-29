@@ -21,6 +21,10 @@ const NOTE_START_MINUTE = Number(PropertiesService.getScriptProperties().getProp
 const NOTE_END_HOUR = Number(PropertiesService.getScriptProperties().getProperty("NOTE_END_HOUR"));
 const NOTE_END_MINUTE = Number(PropertiesService.getScriptProperties().getProperty("NOTE_END_MINUTE"));
 
+// ポイント
+const GOOD_MORNING_POINT = Number(PropertiesService.getScriptProperties().getProperty("GOOD_MORNING_POINT"));
+const NOTE_POINT = Number(PropertiesService.getScriptProperties().getProperty("NOTE_POINT"));
+
 // 起動コマンド
 const COMMAND_GOD_MORNING = "おはよう";
 const COMMAND_TODAY = "今日の集計結果";
