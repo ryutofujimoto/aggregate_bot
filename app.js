@@ -238,14 +238,15 @@ function monthAggregateResult(replyToken) {
 
     for (let i = 0; i < data.length; i++) {
         let timestamp = new Date(data[i][0]);
+        let getMessage = data[i][2];
         let row = data[i];
         let userName = row[4];
 
         if (timestamp.getMonth() === currentDate.getMonth()) {
             if (summary[userName]) {
-                summary[userName]++;
+                summary[userName] += getPoint(getMessage);
             } else {
-                summary[userName] = 1;
+                summary[userName] = getPoint(getMessage);
             }
         }
     }
