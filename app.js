@@ -46,8 +46,22 @@ const COMMAND_GOD_MORNING = "おはよう";
 const COMMAND_TODAY = "今日の集計結果";
 const COMMAND_WEEK = "今週の集計結果";
 const COMMAND_MONTH = "今月の集計結果";
+
+// 絵文字
 const COMMAND_MONTH_TYPE_LIST = "🍙";
 const COMMAND_BOOK_EMOJI = ["📖", "📕", "📗", "📘", "📙", "📚", "🗒️", "📝"];
+const NUMVER_EMOJIS = [
+  "0️⃣",
+  "1️⃣",
+  "2️⃣",
+  "3️⃣",
+  "4️⃣",
+  "5️⃣",
+  "6️⃣",
+  "7️⃣",
+  "8️⃣",
+  "9️⃣",
+];
 
 //================================//
 //================================//
@@ -358,6 +372,16 @@ function convertionDisplayTime(startHour, startMinute, endHour, endMinute) {
   return (
     "AM" + startHour + ":" + startMinute + " ~ AM" + endHour + ":" + endMinute
   );
+}
+
+// 回数表示を絵文字の数字に変換
+function convertionDisplayCount(count) {
+  const constString = count
+    .toString()
+    .split("")
+    .map((number) => NUMVER_EMOJIS[number])
+    .join("");
+  return constString;
 }
 
 //================================//
