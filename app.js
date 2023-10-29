@@ -299,9 +299,9 @@ function monthUserListAggregateResult(replyToken) {
                 }
 
                 if (!goodMorningSummary[userName][weekLabel]) {
-                    goodMorningSummary[userName][weekLabel] = 1;
+                    goodMorningSummary[userName][weekLabel] = getPoint(getMessage);
                 } else {
-                    goodMorningSummary[userName][weekLabel]++;
+                    goodMorningSummary[userName][weekLabel] += getPoint(getMessage);
                 }
             }
 
@@ -312,9 +312,9 @@ function monthUserListAggregateResult(replyToken) {
                 }
 
                 if (!bookSummary[userName][weekLabel]) {
-                    bookSummary[userName][weekLabel] = 1;
+                    bookSummary[userName][weekLabel] = getPoint(getMessage);
                 } else {
-                    bookSummary[userName][weekLabel]++;
+                    bookSummary[userName][weekLabel] += getPoint(getMessage);
                 }
             }
         }
