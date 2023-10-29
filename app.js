@@ -46,8 +46,22 @@ const COMMAND_GOD_MORNING = "おはよう";
 const COMMAND_TODAY = "今日の集計結果";
 const COMMAND_WEEK = "今週の集計結果";
 const COMMAND_MONTH = "今月の集計結果";
+
+// 絵文字
 const COMMAND_MONTH_TYPE_LIST = "🍙";
 const COMMAND_BOOK_EMOJI = ["📖", "📕", "📗", "📘", "📙", "📚", "🗒️", "📝"];
+const NUMVER_EMOJIS = [
+  "0️⃣",
+  "1️⃣",
+  "2️⃣",
+  "3️⃣",
+  "4️⃣",
+  "5️⃣",
+  "6️⃣",
+  "7️⃣",
+  "8️⃣",
+  "9️⃣",
+];
 
 //================================//
 //================================//
@@ -199,7 +213,8 @@ function todayAggregateResult(replyToken) {
   summary = Object.entries(summary).sort((a, b) => b[1] - a[1]);
 
   summary.forEach(function (entry, index) {
-    reply += index + 1 + ". " + entry[0] + ": " + entry[1] + "ポイント\n";
+    const countValue = convertionDisplayCount(entry[1]);
+    reply += index + 1 + ". " + entry[0] + ": " + countValue + "ポイント\n";
   });
 
   return replyMessage(replyToken, reply);
@@ -237,7 +252,8 @@ function weekAggregateResult(replyToken) {
   summary = Object.entries(summary).sort((a, b) => b[1] - a[1]);
 
   summary.forEach(function (entry, index) {
-    reply += index + 1 + ". " + entry[0] + ": " + entry[1] + "ポイント\n";
+    const countValue = convertionDisplayCount(entry[1]);
+    reply += index + 1 + ". " + entry[0] + ": " + countValue + "ポイント\n";
   });
 
   return replyMessage(replyToken, reply);
@@ -269,7 +285,8 @@ function monthAggregateResult(replyToken) {
   summary = Object.entries(summary).sort((a, b) => b[1] - a[1]);
 
   summary.forEach(function (entry, index) {
-    reply += index + 1 + ". " + entry[0] + ": " + entry[1] + "ポイント\n";
+    const countValue = convertionDisplayCount(entry[1]);
+    reply += index + 1 + ". " + entry[0] + ": " + countValue + "ポイント\n";
   });
 
   return replyMessage(replyToken, reply);
@@ -297,14 +314,10 @@ function monthUserListAggregateResult(replyToken) {
     weekStart.setDate(weekStart.getDate() - weekStart.getDay());
 
     if (weekStart <= timestamp) {
-      let weekStartStr = Utilities.formatDate(
-        weekStart,
-        "GMT+09:00",
-        "yyyy/MM/dd"
-      );
+      let weekStartStr = Utilities.formatDate(weekStart, "GMT+09:00", "MM/dd");
       let weekEnd = new Date(weekStart);
       weekEnd.setDate(weekStart.getDate() + 6);
-      let weekEndStr = Utilities.formatDate(weekEnd, "GMT+09:00", "yyyy/MM/dd");
+      let weekEndStr = Utilities.formatDate(weekEnd, "GMT+09:00", "MM/dd");
 
       let weekLabel = weekStartStr + " ～ " + weekEndStr;
 
@@ -340,8 +353,10 @@ function monthUserListAggregateResult(replyToken) {
   for (let user in goodMorningSummary) {
     reply += user + ":\n";
     for (let weekLabel in goodMorningSummary[user]) {
-      reply +=
-        weekLabel + ": " + goodMorningSummary[user][weekLabel] + "ポイント\n";
+      const countValue = convertionDisplayCount(
+        goodMorningSummary[user][weekLabel]
+      );
+      reply += weekLabel + ": " + countValue + "ポイント\n";
     }
   }
 
@@ -350,7 +365,8 @@ function monthUserListAggregateResult(replyToken) {
   for (let user in bookSummary) {
     reply += user + ":\n";
     for (let weekLabel in bookSummary[user]) {
-      reply += weekLabel + ": " + bookSummary[user][weekLabel] + "ポイント\n";
+      const countValue = convertionDisplayCount(bookSummary[user][weekLabel]);
+      reply += weekLabel + ": " + countValue + "ポイント\n";
     }
   }
 
@@ -362,6 +378,16 @@ function convertionDisplayTime(startHour, startMinute, endHour, endMinute) {
   return (
     "AM" + startHour + ":" + startMinute + " ~ AM" + endHour + ":" + endMinute
   );
+}
+
+// 回数表示を絵文字の数字に変換
+function convertionDisplayCount(count) {
+  const constString = count
+    .toString()
+    .split("")
+    .map((number) => NUMVER_EMOJIS[number])
+    .join("");
+  return constString;
 }
 
 //================================//
@@ -433,16 +459,11 @@ function doPost(e) {
   // おはようメッセージをスプレッドシートに保存
   if (message.includes(COMMAND_GOD_MORNING)) {
     if (!checkAggregateTimeGoodMorning(currentTime)) {
-      let msg = GOOD_MORNING_START_HOUR + ":";
-      msg += GOOD_MORNING_START_MINUTE + ":";
-      msg += GOOD_MORNING_END_HOUR + ":";
-      msg += GOOD_MORNING_END_MINUTE + ":---";
-      msg += currentTime.getHours() + ":";
-      msg += currentTime.getMinutes() + ":";
       return replyMessage(
         replyToken,
-        msg +
-          "\n「おはよう」メッセージ集計時間外です。\n集計時間は" +
+        "「" +
+          COMMAND_GOD_MORNING +
+          "」メッセージ集計時間外です。\n集計時間は" +
           displayTimeGoodMorning +
           "です"
       );
