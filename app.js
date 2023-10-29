@@ -213,7 +213,8 @@ function todayAggregateResult(replyToken) {
   summary = Object.entries(summary).sort((a, b) => b[1] - a[1]);
 
   summary.forEach(function (entry, index) {
-    reply += index + 1 + ". " + entry[0] + ": " + entry[1] + "ポイント\n";
+    const countValue = convertionDisplayCount(entry[1]);
+    reply += index + 1 + ". " + entry[0] + ": " + countValue + "ポイント\n";
   });
 
   return replyMessage(replyToken, reply);
@@ -251,7 +252,8 @@ function weekAggregateResult(replyToken) {
   summary = Object.entries(summary).sort((a, b) => b[1] - a[1]);
 
   summary.forEach(function (entry, index) {
-    reply += index + 1 + ". " + entry[0] + ": " + entry[1] + "ポイント\n";
+    const countValue = convertionDisplayCount(entry[1]);
+    reply += index + 1 + ". " + entry[0] + ": " + countValue + "ポイント\n";
   });
 
   return replyMessage(replyToken, reply);
@@ -283,7 +285,8 @@ function monthAggregateResult(replyToken) {
   summary = Object.entries(summary).sort((a, b) => b[1] - a[1]);
 
   summary.forEach(function (entry, index) {
-    reply += index + 1 + ". " + entry[0] + ": " + entry[1] + "ポイント\n";
+    const countValue = convertionDisplayCount(entry[1]);
+    reply += index + 1 + ". " + entry[0] + ": " + countValue + "ポイント\n";
   });
 
   return replyMessage(replyToken, reply);
@@ -350,8 +353,10 @@ function monthUserListAggregateResult(replyToken) {
   for (let user in goodMorningSummary) {
     reply += user + ":\n";
     for (let weekLabel in goodMorningSummary[user]) {
-      reply +=
-        weekLabel + ": " + goodMorningSummary[user][weekLabel] + "ポイント\n";
+      const countValue = convertionDisplayCount(
+        goodMorningSummary[user][weekLabel]
+      );
+      reply += weekLabel + ": " + countValue + "ポイント\n";
     }
   }
 
@@ -360,7 +365,8 @@ function monthUserListAggregateResult(replyToken) {
   for (let user in bookSummary) {
     reply += user + ":\n";
     for (let weekLabel in bookSummary[user]) {
-      reply += weekLabel + ": " + bookSummary[user][weekLabel] + "ポイント\n";
+      const countValue = convertionDisplayCount(bookSummary[user][weekLabel]);
+      reply += weekLabel + ": " + countValue + "ポイント\n";
     }
   }
 
