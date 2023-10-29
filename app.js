@@ -94,6 +94,19 @@ function getUserName(userId) {
     }
 }
 
+// ポイントを種別ごとに取得
+function getPoint(message) {
+    let point = 0;
+
+    if (message.includes(COMMAND_GOD_MORNING)) {
+        point = GOOD_MORNING_POINT;
+    } else if (COMMAND_BOOK_EMOJI.some((item) => message.includes(item))) {
+        point = NOTE_POINT;
+    }
+
+    return point;
+}
+
 // フォーマット日付
 function formatDate(date, format) {
     format = format.replace(/YYYY/, date.getFullYear());
