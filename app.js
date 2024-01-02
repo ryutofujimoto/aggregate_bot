@@ -34,6 +34,7 @@ const COMMAND_GOD_MORNING = "おはよう";
 const COMMAND_TODAY = "今日の集計結果";
 const COMMAND_WEEK = "今週の集計結果";
 const COMMAND_MONTH = "今月の集計結果";
+const COMMAND_LAST_YEAR = "昨年の集計結果";
 
 // 絵文字
 const COMMAND_MONTH_TYPE_LIST = "🍙";
@@ -326,7 +327,7 @@ function monthUserListAggregateResult(replyToken) {
 
     let reply = "今月の「おはよう」メッセージの一覧\n";
     for (let user in goodMorningSummary) {
-        reply += user + ":\n";
+        reply += "\n" + user + ":\n";
         for (let weekLabel in goodMorningSummary[user]) {
             const countValue = convertionDisplayCount(goodMorningSummary[user][weekLabel]);
             reply += weekLabel + ": " + countValue + "ポイント\n";
@@ -336,7 +337,86 @@ function monthUserListAggregateResult(replyToken) {
     reply += "-------------------------------\n";
     reply += "今月の「手帳」メッセージの一覧\n";
     for (let user in bookSummary) {
-        reply += user + ":\n";
+        reply += "\n" + user + ":\n";
+        for (let weekLabel in bookSummary[user]) {
+            const countValue = convertionDisplayCount(bookSummary[user][weekLabel]);
+            reply += weekLabel + ": " + countValue + "ポイント\n";
+        }
+    }
+
+    return replyMessage(replyToken, reply);
+}
+
+// ユーザー別昨年の集計結果
+function lastYearUserListAggregateResult(replyToken) {
+    const data = SHEET.getDataRange().getValues();
+    const lastYearDate = new Date().getFullYear() - 1;
+    const goodMorningSummary = {};
+    const bookSummary = {};
+
+    for (let i = 0; i < data.length; i++) {
+        let timestamp = new Date(data[i][0]);
+        let getMessage = data[i][2];
+        let row = data[i];
+        let userName = row[4];
+
+        if (timestamp.getFullYear() !== lastYearDate) {
+            continue;
+        }
+
+        let weekStart = new Date(timestamp);
+        weekStart.setHours(0, 0, 0, 0);
+        weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+
+        if (weekStart <= timestamp) {
+            let weekStartStr = Utilities.formatDate(weekStart, "GMT+09:00", "YYYY/MM/dd");
+            let weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6);
+            let weekEndStr = Utilities.formatDate(weekEnd, "GMT+09:00", "YYYY/MM/dd");
+
+            let weekLabel = weekStartStr + " ～ " + weekEndStr;
+
+            // 「おはよう」集計
+            if (getMessage.includes(COMMAND_GOD_MORNING)) {
+                if (!goodMorningSummary[userName]) {
+                    goodMorningSummary[userName] = {};
+                }
+
+                if (!goodMorningSummary[userName][weekLabel]) {
+                    goodMorningSummary[userName][weekLabel] = getPoint(getMessage);
+                } else {
+                    goodMorningSummary[userName][weekLabel] += getPoint(getMessage);
+                }
+            }
+
+            // 手帳集計
+            if (COMMAND_BOOK_EMOJI.some((item) => getMessage.includes(item))) {
+                if (!bookSummary[userName]) {
+                    bookSummary[userName] = {};
+                }
+
+                if (!bookSummary[userName][weekLabel]) {
+                    bookSummary[userName][weekLabel] = getPoint(getMessage);
+                } else {
+                    bookSummary[userName][weekLabel] += getPoint(getMessage);
+                }
+            }
+        }
+    }
+
+    let reply = "昨年の「おはよう」メッセージの一覧\n";
+    for (let user in goodMorningSummary) {
+        reply += "\n" + user + ":\n";
+        for (let weekLabel in goodMorningSummary[user]) {
+            const countValue = convertionDisplayCount(goodMorningSummary[user][weekLabel]);
+            reply += weekLabel + ": " + countValue + "ポイント\n";
+        }
+    }
+
+    reply += "-------------------------------\n";
+    reply += "昨年の「手帳」メッセージの一覧\n";
+    for (let user in bookSummary) {
+        reply += "\n" + user + ":\n";
         for (let weekLabel in bookSummary[user]) {
             const countValue = convertionDisplayCount(bookSummary[user][weekLabel]);
             reply += weekLabel + ": " + countValue + "ポイント\n";
@@ -392,6 +472,7 @@ function doPost(e) {
         reply += "\n今日：「" + COMMAND_TODAY + "」";
         reply += "\n今週：「" + COMMAND_WEEK + "」";
         reply += "\n今月：「" + COMMAND_MONTH + "」";
+        reply += "\n昨年：「" + COMMAND_LAST_YEAR + "」";
         reply += "\n隠し：「" + COMMAND_MONTH_TYPE_LIST + "」";
 
         return replyMessage(replyToken, reply);
@@ -415,6 +496,11 @@ function doPost(e) {
     // 今月の種類別一覧集計結果
     if (message.includes(COMMAND_MONTH_TYPE_LIST)) {
         monthUserListAggregateResult(replyToken);
+    }
+
+    // 昨年の種類別一覧集計結果
+    if (message.includes(COMMAND_LAST_YEAR)) {
+        lastYearUserListAggregateResult(replyToken);
     }
 
     // おはようメッセージをスプレッドシートに保存
