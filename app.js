@@ -41,6 +41,59 @@ const COMMAND_MONTH_TYPE_LIST = "🍙";
 const COMMAND_BOOK_EMOJI = ["📖", "📕", "📗", "📘", "📙", "📚", "🗒️", "📝"];
 const NUMVER_EMOJIS = ["0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"];
 
+const COMMAND_FACES_EMOJI = [
+    "👱‍♂️",
+    "👩‍🦳",
+    "👶",
+    "👲",
+    "👳‍♀️",
+    "🧕",
+    "👮‍♀️",
+    "👷‍♂️",
+    "💂‍♀️",
+    "🕵️‍♀️",
+    "👨‍⚕️",
+    "👩‍🌾",
+    "👩‍🍳",
+    "👩‍🎓",
+    "👩‍🎤",
+    "🧑‍🎤",
+    "👩‍🏫",
+    "👨‍🏭",
+    "👨‍💼",
+    "👨‍🎨",
+    "👩‍🎨",
+    "👨‍🍳",
+    "👩‍🍼",
+    "👨‍💻",
+    "👩‍💻",
+    "👨‍🎤",
+    "👨‍🏫",
+    "👩‍🏭",
+    "👨‍🔬",
+    "👩‍🔧",
+    "👨‍🚀",
+    "👩‍🚒",
+    "👨‍🚒",
+    "👩‍⚖️",
+    "👨‍🔧",
+    "👩‍🔬",
+    "👨‍✈️",
+    "👩‍✈️",
+    "🧑‍🚀",
+    "🧑‍✈️",
+    "🧑‍🍳",
+    "🧑‍🎨",
+    "🧑‍🔧",
+    "🧑‍💻",
+    "🧑‍🚒",
+    "🧑‍⚖️",
+    "🧑‍🌾",
+    "🧑‍💼",
+    "🧑‍🏫",
+    "🧑‍🏭",
+    /* 追加の人っぽい顔文字を続けて追加してください */
+];
 //================================//
 //================================//
 
@@ -327,7 +380,9 @@ function monthUserListAggregateResult(replyToken) {
 
     let reply = "今月の「おはよう」メッセージの一覧\n";
     for (let user in goodMorningSummary) {
-        reply += "\n" + user + ":\n";
+        const feceEmojiIndex = Math.floor(Math.random() * COMMAND_FACES_EMOJI.length);
+
+        reply += "\n" + user + COMMAND_FACES_EMOJI[feceEmojiIndex] + ":\n";
         for (let weekLabel in goodMorningSummary[user]) {
             const countValue = convertionDisplayCount(goodMorningSummary[user][weekLabel]);
             reply += weekLabel + ": " + countValue + "ポイント\n";
@@ -337,7 +392,9 @@ function monthUserListAggregateResult(replyToken) {
     reply += "----------------------------\n";
     reply += "今月の「手帳」メッセージの一覧\n";
     for (let user in bookSummary) {
-        reply += "\n" + user + ":\n";
+        const feceEmojiIndex = Math.floor(Math.random() * COMMAND_FACES_EMOJI.length);
+
+        reply += "\n" + user + COMMAND_FACES_EMOJI[feceEmojiIndex] + ":\n";
         for (let weekLabel in bookSummary[user]) {
             const countValue = convertionDisplayCount(bookSummary[user][weekLabel]);
             reply += weekLabel + ": " + countValue + "ポイント\n";
@@ -406,7 +463,9 @@ function lastYearUserListAggregateResult(replyToken) {
 
     let reply = "昨年の「おはよう」メッセージの一覧\n";
     for (let user in goodMorningSummary) {
-        reply += "\n" + user + ":\n";
+        const feceEmojiIndex = Math.floor(Math.random() * COMMAND_FACES_EMOJI.length);
+
+        reply += "\n" + user + COMMAND_FACES_EMOJI[feceEmojiIndex] + ":\n";
         for (let weekLabel in goodMorningSummary[user]) {
             const countValue = convertionDisplayCount(goodMorningSummary[user][weekLabel]);
             reply += weekLabel + ": " + countValue + "ポイント\n";
@@ -416,7 +475,9 @@ function lastYearUserListAggregateResult(replyToken) {
     reply += "----------------------------\n";
     reply += "昨年の「手帳」メッセージの一覧\n";
     for (let user in bookSummary) {
-        reply += "\n" + user + ":\n";
+        const feceEmojiIndex = Math.floor(Math.random() * COMMAND_FACES_EMOJI.length);
+
+        reply += "\n" + user + COMMAND_FACES_EMOJI[feceEmojiIndex] + ":\n";
         for (let weekLabel in bookSummary[user]) {
             const countValue = convertionDisplayCount(bookSummary[user][weekLabel]);
             reply += weekLabel + ": " + countValue + "ポイント\n";
