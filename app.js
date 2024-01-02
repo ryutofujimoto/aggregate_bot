@@ -14,12 +14,20 @@ const GOOD_MORNING_START_HOUR = Number(PropertiesService.getScriptProperties().g
 const GOOD_MORNING_START_MINUTE = Number(PropertiesService.getScriptProperties().getProperty("GOOD_MORNING_START_MINUTE"));
 const GOOD_MORNING_END_HOUR = Number(PropertiesService.getScriptProperties().getProperty("GOOD_MORNING_END_HOUR"));
 const GOOD_MORNING_END_MINUTE = Number(PropertiesService.getScriptProperties().getProperty("GOOD_MORNING_END_MINUTE"));
+const GOOD_MORNING_START_DATE = new Date(new Date().setHours(GOOD_MORNING_START_HOUR, GOOD_MORNING_START_MINUTE, 0));
+const GOOD_MORNING_END_DATE = new Date(new Date().setHours(GOOD_MORNING_END_HOUR, GOOD_MORNING_END_MINUTE, 0));
 
 // 集計対象時間「手帳」
 const NOTE_START_HOUR = Number(PropertiesService.getScriptProperties().getProperty("NOTE_START_HOUR"));
 const NOTE_START_MINUTE = Number(PropertiesService.getScriptProperties().getProperty("NOTE_START_MINUTE"));
 const NOTE_END_HOUR = Number(PropertiesService.getScriptProperties().getProperty("NOTE_END_HOUR"));
 const NOTE_END_MINUTE = Number(PropertiesService.getScriptProperties().getProperty("NOTE_END_MINUTE"));
+const NOTE_START_DATE = new Date(new Date().setHours(NOTE_START_HOUR, NOTE_START_MINUTE, 0));
+const NOTE_END_DATE = new Date(new Date().setHours(NOTE_END_HOUR, NOTE_END_MINUTE, 0));
+
+// ポイント
+const GOOD_MORNING_POINT = Number(PropertiesService.getScriptProperties().getProperty("GOOD_MORNING_POINT"));
+const NOTE_POINT = Number(PropertiesService.getScriptProperties().getProperty("NOTE_POINT"));
 
 // 起動コマンド
 const COMMAND_GOD_MORNING = "おはよう";
@@ -90,6 +98,19 @@ function getUserName(userId) {
     }
 }
 
+// ポイントを種別ごとに取得
+function getPoint(message) {
+    let point = 0;
+
+    if (message.includes(COMMAND_GOD_MORNING)) {
+        point = GOOD_MORNING_POINT;
+    } else if (COMMAND_BOOK_EMOJI.some((item) => message.includes(item))) {
+        point = NOTE_POINT;
+    }
+
+    return point;
+}
+
 // フォーマット日付
 function formatDate(date, format) {
     format = format.replace(/YYYY/, date.getFullYear());
@@ -142,6 +163,7 @@ function todayAggregateResult(replyToken) {
 
     for (let i = 0; i < data.length; i++) {
         let timestamp = new Date(data[i][0]);
+        let getMessage = data[i][2];
         let row = data[i];
         let userName = row[4];
 
@@ -155,9 +177,9 @@ function todayAggregateResult(replyToken) {
         }
 
         if (summary[userName]) {
-            summary[userName]++;
+            summary[userName] += getPoint(getMessage);
         } else {
-            summary[userName] = 1;
+            summary[userName] = getPoint(getMessage);
         }
     }
 
@@ -186,15 +208,16 @@ function weekAggregateResult(replyToken) {
 
     for (let i = 0; i < data.length; i++) {
         let timestamp = new Date(data[i][0]);
+        let getMessage = data[i][2];
         let row = data[i];
         let userName = row[4];
 
         // 今週の日曜日以降
         if (timestamp >= sunday) {
             if (summary[userName]) {
-                summary[userName]++;
+                summary[userName] += getPoint(getMessage);
             } else {
-                summary[userName] = 1;
+                summary[userName] = getPoint(getMessage);
             }
         }
     }
@@ -219,14 +242,15 @@ function monthAggregateResult(replyToken) {
 
     for (let i = 0; i < data.length; i++) {
         let timestamp = new Date(data[i][0]);
+        let getMessage = data[i][2];
         let row = data[i];
         let userName = row[4];
 
         if (timestamp.getMonth() === currentDate.getMonth()) {
             if (summary[userName]) {
-                summary[userName]++;
+                summary[userName] += getPoint(getMessage);
             } else {
-                summary[userName] = 1;
+                summary[userName] = getPoint(getMessage);
             }
         }
     }
@@ -279,9 +303,9 @@ function monthUserListAggregateResult(replyToken) {
                 }
 
                 if (!goodMorningSummary[userName][weekLabel]) {
-                    goodMorningSummary[userName][weekLabel] = 1;
+                    goodMorningSummary[userName][weekLabel] = getPoint(getMessage);
                 } else {
-                    goodMorningSummary[userName][weekLabel]++;
+                    goodMorningSummary[userName][weekLabel] += getPoint(getMessage);
                 }
             }
 
@@ -292,9 +316,9 @@ function monthUserListAggregateResult(replyToken) {
                 }
 
                 if (!bookSummary[userName][weekLabel]) {
-                    bookSummary[userName][weekLabel] = 1;
+                    bookSummary[userName][weekLabel] = getPoint(getMessage);
                 } else {
-                    bookSummary[userName][weekLabel]++;
+                    bookSummary[userName][weekLabel] += getPoint(getMessage);
                 }
             }
         }
@@ -323,8 +347,8 @@ function monthUserListAggregateResult(replyToken) {
 }
 
 // 集計対象時間を表示用に変換
-function convertionDisplayTime(startHour, startMinute, endHour, endMinute) {
-    return "AM" + startHour + ":" + startMinute + " ~ AM" + endHour + ":" + endMinute;
+function convertionDisplayTime(startTime, endTime) {
+    return startTime.getHours() + ":" + startTime.getMinutes() + " ~ " + endTime.getHours() + ":" + endTime.getMinutes();
 }
 
 // 回数表示を絵文字の数字に変換
@@ -350,13 +374,8 @@ function doPost(e) {
 
     let chatId = getChatId(webhookData);
 
-    let displayTimeGoodMorning = convertionDisplayTime(
-        GOOD_MORNING_START_HOUR,
-        GOOD_MORNING_START_MINUTE,
-        GOOD_MORNING_END_HOUR,
-        GOOD_MORNING_END_MINUTE
-    );
-    let displayTimeNote = convertionDisplayTime(NOTE_START_HOUR, NOTE_START_MINUTE, NOTE_END_HOUR, NOTE_END_MINUTE);
+    let displayTimeGoodMorning = convertionDisplayTime(GOOD_MORNING_START_DATE, GOOD_MORNING_END_DATE);
+    let displayTimeNote = convertionDisplayTime(NOTE_START_DATE, NOTE_END_DATE);
 
     // ヘルプコマンド
     let help1 = "ヘルプ";
