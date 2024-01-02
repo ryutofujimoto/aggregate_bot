@@ -334,7 +334,7 @@ function monthUserListAggregateResult(replyToken) {
         }
     }
 
-    reply += "-------------------------------\n";
+    reply += "----------------------------\n";
     reply += "今月の「手帳」メッセージの一覧\n";
     for (let user in bookSummary) {
         reply += "\n" + user + ":\n";
@@ -369,10 +369,10 @@ function lastYearUserListAggregateResult(replyToken) {
         weekStart.setDate(weekStart.getDate() - weekStart.getDay());
 
         if (weekStart <= timestamp) {
-            let weekStartStr = Utilities.formatDate(weekStart, "GMT+09:00", "YYYY/MM/dd");
+            let weekStartStr = Utilities.formatDate(weekStart, "GMT+09:00", "MM/dd");
             let weekEnd = new Date(weekStart);
             weekEnd.setDate(weekStart.getDate() + 6);
-            let weekEndStr = Utilities.formatDate(weekEnd, "GMT+09:00", "YYYY/MM/dd");
+            let weekEndStr = Utilities.formatDate(weekEnd, "GMT+09:00", "MM/dd");
 
             let weekLabel = weekStartStr + " ～ " + weekEndStr;
 
@@ -413,7 +413,7 @@ function lastYearUserListAggregateResult(replyToken) {
         }
     }
 
-    reply += "-------------------------------\n";
+    reply += "----------------------------\n";
     reply += "昨年の「手帳」メッセージの一覧\n";
     for (let user in bookSummary) {
         reply += "\n" + user + ":\n";
@@ -463,11 +463,11 @@ function doPost(e) {
     if (message.includes(help1) || message.includes(help2)) {
         let reply = "集計時間：" + displayTimeGoodMorning;
         reply += "\n「" + COMMAND_GOD_MORNING + "」メッセージを集計します。";
-        reply += "\n-------------------------------";
+        reply += "\n----------------------------";
         reply += "\n集計時間：" + displayTimeNote;
         reply += "\n「" + COMMAND_BOOK_EMOJI + "」";
         reply += "\nメッセージを集計します。";
-        reply += "\n-------------------------------";
+        reply += "\n----------------------------";
         reply += "\n👇👇集計結果表示一覧👇👇";
         reply += "\n今日：「" + COMMAND_TODAY + "」";
         reply += "\n今週：「" + COMMAND_WEEK + "」";
