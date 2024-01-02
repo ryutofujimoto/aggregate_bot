@@ -369,10 +369,10 @@ function lastYearUserListAggregateResult(replyToken) {
         weekStart.setDate(weekStart.getDate() - weekStart.getDay());
 
         if (weekStart <= timestamp) {
-            let weekStartStr = Utilities.formatDate(weekStart, "GMT+09:00", "YYYY/MM/dd");
+            let weekStartStr = Utilities.formatDate(weekStart, "GMT+09:00", "MM/dd");
             let weekEnd = new Date(weekStart);
             weekEnd.setDate(weekStart.getDate() + 6);
-            let weekEndStr = Utilities.formatDate(weekEnd, "GMT+09:00", "YYYY/MM/dd");
+            let weekEndStr = Utilities.formatDate(weekEnd, "GMT+09:00", "MM/dd");
 
             let weekLabel = weekStartStr + " ～ " + weekEndStr;
 
