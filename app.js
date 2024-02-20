@@ -17,14 +17,6 @@ const GOOD_MORNING_END_MINUTE = Number(PropertiesService.getScriptProperties().g
 const GOOD_MORNING_START_DATE = new Date(new Date().setHours(GOOD_MORNING_START_HOUR, GOOD_MORNING_START_MINUTE, 0));
 const GOOD_MORNING_END_DATE = new Date(new Date().setHours(GOOD_MORNING_END_HOUR, GOOD_MORNING_END_MINUTE, 0));
 
-// 集計対象時間「手帳」
-const NOTE_START_HOUR = Number(PropertiesService.getScriptProperties().getProperty("NOTE_START_HOUR"));
-const NOTE_START_MINUTE = Number(PropertiesService.getScriptProperties().getProperty("NOTE_START_MINUTE"));
-const NOTE_END_HOUR = Number(PropertiesService.getScriptProperties().getProperty("NOTE_END_HOUR"));
-const NOTE_END_MINUTE = Number(PropertiesService.getScriptProperties().getProperty("NOTE_END_MINUTE"));
-const NOTE_START_DATE = new Date(new Date().setHours(NOTE_START_HOUR, NOTE_START_MINUTE, 0));
-const NOTE_END_DATE = new Date(new Date().setHours(NOTE_END_HOUR, NOTE_END_MINUTE, 0));
-
 // ポイント
 const GOOD_MORNING_POINT = Number(PropertiesService.getScriptProperties().getProperty("GOOD_MORNING_POINT"));
 const NOTE_POINT = Number(PropertiesService.getScriptProperties().getProperty("NOTE_POINT"));
@@ -184,19 +176,6 @@ function checkAggregateTimeGoodMorning(timestamp) {
         (timestamp.getHours() === GOOD_MORNING_START_HOUR && timestamp.getMinutes() >= GOOD_MORNING_START_MINUTE) ||
         (timestamp.getHours() > GOOD_MORNING_START_HOUR && timestamp.getHours() < GOOD_MORNING_END_HOUR) ||
         (timestamp.getHours() === GOOD_MORNING_END_HOUR && timestamp.getMinutes() <= GOOD_MORNING_END_MINUTE)
-    ) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-// 開始時間判定「手帳」
-function checkAggregateTimeNote(timestamp) {
-    if (
-        (timestamp.getHours() === NOTE_START_HOUR && timestamp.getMinutes() >= NOTE_START_MINUTE) ||
-        (timestamp.getHours() > NOTE_START_HOUR && timestamp.getHours() < NOTE_END_HOUR) ||
-        (timestamp.getHours() === NOTE_END_HOUR && timestamp.getMinutes() <= NOTE_END_MINUTE)
     ) {
         return true;
     } else {
@@ -516,7 +495,6 @@ function doPost(e) {
     let chatId = getChatId(webhookData);
 
     let displayTimeGoodMorning = convertionDisplayTime(GOOD_MORNING_START_DATE, GOOD_MORNING_END_DATE);
-    let displayTimeNote = convertionDisplayTime(NOTE_START_DATE, NOTE_END_DATE);
 
     // ヘルプコマンド
     let help1 = "ヘルプ";
@@ -525,7 +503,6 @@ function doPost(e) {
         let reply = "集計時間：" + displayTimeGoodMorning;
         reply += "\n「" + COMMAND_GOD_MORNING + "」メッセージを集計します。";
         reply += "\n----------------------------";
-        reply += "\n集計時間：" + displayTimeNote;
         reply += "\n「" + COMMAND_BOOK_EMOJI + "」";
         reply += "\nメッセージを集計します。";
         reply += "\n----------------------------";
@@ -578,9 +555,6 @@ function doPost(e) {
 
     // 手帳メッセージをスプレッドシートに保存
     if (COMMAND_BOOK_EMOJI.some((item) => message.includes(item))) {
-        if (!checkAggregateTimeNote(currentTime)) {
-            return replyMessage(replyToken, "「" + COMMAND_BOOK_EMOJI + "」メッセージ集計時間外です。\n集計時間は" + displayTimeNote + "です");
-        }
         return outputFileMessage(currentTime, SenderID, message);
     }
 }
